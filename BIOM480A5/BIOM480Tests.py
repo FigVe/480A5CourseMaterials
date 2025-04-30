@@ -942,7 +942,25 @@ def durbin_watson_test(residuals, n_params):
 # Mariana S will present on the topic of Point-Biserial correlation test, creating function named 'pointbiserialr' 
 
 #*********************
-# Dylan S will present on the topic of Barnard’s exact test, creating function named 'barnard_exact' 
+# Dylan S will present on the topic of Barnard’s exact test, creating function named 'barnard_exact'
+
+from statsmodels.stats.contingency_tables import Table2x2
+
+def barnard_exact(table):
+    '''
+    Perform Barnard’s Exact Test on a 2x2 contingency table.
+
+    Parameters:
+    table : array_like
+        A 2x2 table, such as [[a, b], [c, d]]
+
+    Returns:
+    p_value : float
+        The p-value from Barnard’s Exact Test
+    '''
+    tbl = Table2x2(table)
+    result = tbl.test_nominal_association(method="barnard")
+    return result.pvalue
 
 #*********************
 # Jacob S will present on the topic of Pearson correlation test, crating function named 'pearsonr' 
