@@ -942,10 +942,80 @@ def durbin_watson_test(residuals, n_params):
 # Mariana S will present on the topic of Point-Biserial correlation test, creating function named 'pointbiserialr' 
 
 #*********************
-# Dylan S will present on the topic of Barnard’s exact test, creating function named 'barnard_exact' 
+# Dylan S will present on the topic of Barnard’s exact test, creating function named 'barnard_exact'
+
+from statsmodels.stats.contingency_tables import Table2x2
+
+def barnard_exact(table):
+    '''
+    Perform Barnard’s Exact Test on a 2x2 contingency table.
+
+    Parameters:
+    table : array_like
+        A 2x2 table, such as [[a, b], [c, d]]
+
+    Returns:
+    p_value : float
+        The p-value from Barnard’s Exact Test
+    '''
+    tbl = Table2x2(table)
+    result = tbl.test_nominal_association(method="barnard")
+    return result.pvalue
 
 #*********************
 # Jacob S will present on the topic of Pearson correlation test, crating function named 'pearsonr' 
+
+def pearson_correlation_test(x, y):
+    '''
+    Perform a Pearson correlation test between two arrays of continuous variables.
+    
+    Parameters:
+    x : array_like
+        First variable to correlate, must be continuous data.
+    y : array_like
+        Second variable to correlate, must be continuous data.
+        
+    Returns:
+    r : float
+        Pearson correlation coefficient between -1 and 1.
+    p_value : float
+        Two-tailed p-value for testing non-correlation.
+    
+    Example:
+    >>> x = [1, 2, 3, 4, 5]
+    >>> y = [2, 3, 5, 6, 8]
+    >>> r, p_value = pearson_correlation_test(x, y)
+    >>> print(r)
+    0.9914860303065454
+    >>> print(p_value)
+    0.000898315196118051
+    
+    Notes:
+    - The Pearson correlation measures linear relationships only.
+    - Values close to 1 indicate strong positive correlation.
+    - Values close to -1 indicate strong negative correlation.
+    - Values close to 0 indicate little to no linear correlation.
+    - Both variables should follow approximately normal distributions for the p-value to be valid.
+    - Requires at least 3 paired data points to compute.
+    '''
+    import scipy.stats as stats
+    import numpy as np
+    
+    # Convert inputs to numpy arrays
+    x = np.array(x, dtype=float)
+    y = np.array(y, dtype=float)
+    
+    # Check for valid inputs
+    if len(x) != len(y):
+        raise ValueError("Input arrays must have the same length")
+    
+    if len(x) < 3:
+        raise ValueError("Need at least 3 data points to compute correlation")
+    
+    # Calculate Pearson correlation and p-value
+    r, p_value = stats.pearsonr(x, y)
+    
+    return r, p_value
 
 #*********************
 # Hayley S will present on the topic of Brown-Forsythe test, creating function named 'brown_forsythe' 
@@ -1032,7 +1102,60 @@ def kendalltau(x, y):
     return tau, p_value
 #*********************
 # Alvina Y will present on the topic of F-test for overall regression, creating function named 'f_test' 
-
+def ftest(y_true, y_pred, n_predictors):
+    '''
+    Perform an F-test for overall significance of regression.
+    
+    Parameters:
+    y_true : array_like
+        Observed/true dependent variable values.
+    y_pred : array_like
+        Predicted values from regression model.
+    n_predictors : int
+        Number of predictor variables in the model (excluding intercept).
+        
+    Returns:
+    f_stat : float
+        The calculated F-statistic.
+    p_value : float
+        The p-value for the F-test.  
+        
+    Example:
+    >>> y_true = [1, 2, 3, 4, 5]
+    >>> y_pred = [1.1, 2.2, 2.9, 4.1, 4.8]
+    >>> n_predictors = 2
+    >>> f_stat, p_value = ftest(y_true, y_pred, n_predictors)
+    >>> print(f_stat)
+    185.71428571428572
+    >>> print(p_value)
+    0.000583853374492769
+    
+    Notes:
+    - Tests H0: All regression coefficients (except intercept) are zero.
+    - Uses scipy.stats.f.sf for p-value calculation.
+    '''
+    import numpy as np
+    from scipy.stats import f
+    
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    n_obs = len(y_true)
+    
+    # Calculate sums of squares
+    ssr = np.sum((y_pred - np.mean(y_true))**2)  # Regression SS
+    sse = np.sum((y_true - y_pred)**2)           # Error SS
+    
+    # Degrees of freedom
+    df_reg = n_predictors
+    df_resid = n_obs - n_predictors - 1
+    
+    # F-statistic
+    f_stat = (ssr / df_reg) / (sse / df_resid)
+    
+    # P-value (right-tailed F-test)
+    p_value = f.sf(f_stat, df_reg, df_resid)
+    
+    return f_stat, p_value
 #*********************
 # Polina Z will present on the topic of Harvey-Collier test, creating function named 'harvey_collier'
 
